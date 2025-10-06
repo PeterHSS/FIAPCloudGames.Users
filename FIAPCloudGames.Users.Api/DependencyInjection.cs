@@ -155,6 +155,13 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(gameBaseUrl);
         });
 
+        services.AddHttpClient<IOrderService, OrderService>(client =>
+        {
+            string gameBaseUrl = configuration.GetValue<string>("OrderApi:BaseAddress")!;
+
+            client.BaseAddress = new Uri(gameBaseUrl);
+        });
+
         return services;
     }
 }

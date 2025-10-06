@@ -10,7 +10,8 @@ public sealed class PurchaseGamesUseCase(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUserService,
-    IGameService gameService)
+    IGameService gameService,
+    IOrderService orderService)
 {
     public async Task HandleAsync(UserPurchaseRequest request, CancellationToken cancellationToken = default)
     {
@@ -49,6 +50,15 @@ public sealed class PurchaseGamesUseCase(
             Log.Warning("Some game IDs were not found: {@MissingGameIds}.", missingGameIds);
 
             throw new KeyNotFoundException($"The following game IDs were not found: {string.Join(", ", missingGameIds)}.");
+        }
+
+        bool orderCreated = await orderService.CreateOrderAsync(user.Id, gamesToPurchase.Select(game => game.Id));
+
+        if (!orderCreated)
+        {
+            Log.Error("Failed to create order for user with ID {UserId}.", user.Id);
+         
+            throw new InvalidOperationException("Failed to create order. Please try again later.");
         }
 
         foreach (var game in gamesToPurchase)

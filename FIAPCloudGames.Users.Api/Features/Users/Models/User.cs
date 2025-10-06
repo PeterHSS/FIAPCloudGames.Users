@@ -39,7 +39,7 @@ public class User
         if (HasPurchasedGame(gameId))
             return;
 
-        Games.Add(new UserGame(Guid.NewGuid(), gameId, Id, DateTime.UtcNow));
+        Games.Append(new UserGame(Guid.NewGuid(), gameId, Id, DateTime.UtcNow));
     }
 
     public void UpdateInformation(string name, string nickname)
