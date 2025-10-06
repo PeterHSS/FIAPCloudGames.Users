@@ -42,7 +42,7 @@ jobs:
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
-          file: src/FIAPCloudGames.Users.Api/Dockerfile
+          file: FIAPCloudGames.Users.Api/Dockerfile
 
       - name: Azure Login
         uses: azure/login@v2
