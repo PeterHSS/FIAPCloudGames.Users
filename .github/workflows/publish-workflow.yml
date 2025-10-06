@@ -23,10 +23,10 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Build
-        run: dotnet build fiap-cloud-games.sln --configuration Release
+        run: dotnet build FIAPCloudGames.Users.sln --configuration Release
 
       - name: Test
-        run: dotnet test fiap-cloud-games.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test FIAPCloudGames.Users.sln --configuration Release --no-build --verbosity normal
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -42,7 +42,7 @@ jobs:
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
-          file: src/FIAPCloudGames.Api/Dockerfile
+          file: src/FIAPCloudGames.Users.Api/Dockerfile
 
       - name: Azure Login
         uses: azure/login@v2
