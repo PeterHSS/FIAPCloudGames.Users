@@ -62,16 +62,6 @@ public static class DependencyInjection
 
         services.AddSwaggerGenWithAuth();
 
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1);
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        }).AddApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'V";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
         services.AddCarter();
 
         services.AddJwtAuthenticationAndAuthorization(configuration);
