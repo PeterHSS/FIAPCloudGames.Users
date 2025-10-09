@@ -12,7 +12,7 @@ public class UserGameConfiguration : IEntityTypeConfiguration<UserGame>
 
         builder.HasKey(userGame => userGame.Id).HasName("PK_UserGame");
 
-        builder.Property(userGame => userGame.Id).IsRequired();
+        builder.Property(userGame => userGame.Id).ValueGeneratedNever().IsRequired();
 
         builder.Property(userGame => userGame.GameId).IsRequired();
 

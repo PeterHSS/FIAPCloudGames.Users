@@ -13,7 +13,7 @@ public class User
     public DateTime BirthDate { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
     public Role Role { get; private set; }
-    public ICollection<UserGame> Games { get; private set; } = [];
+    public ICollection<UserGame> Games { get; private set; }
 
     public static User Create(string name, string email, string password, string nickname, string document, DateTime birthDate)
     {
@@ -39,7 +39,7 @@ public class User
         if (HasPurchasedGame(gameId))
             return;
 
-        Games.Append(new UserGame(Guid.NewGuid(), gameId, Id, DateTime.UtcNow));
+        Games.Add(new UserGame(Guid.NewGuid(), gameId, Id, DateTime.UtcNow));
     }
 
     public void UpdateInformation(string name, string nickname)
