@@ -140,14 +140,14 @@ public static class DependencyInjection
     {
         services.AddHttpClient<IGameService, GameService>(client =>
         {
-            string gameBaseUrl = configuration.GetValue<string>("GatewayApi:BaseAddress")!;
+            string gameBaseUrl = configuration.GetValue<string>("GameApi:BaseAddress")!;
 
             client.BaseAddress = new Uri(gameBaseUrl);
         });
 
         services.AddHttpClient<IOrderService, OrderService>(client =>
         {
-            string gameBaseUrl = configuration.GetValue<string>("GatewayApi:BaseAddress")!;
+            string gameBaseUrl = configuration.GetValue<string>("OrderApi:BaseAddress")!;
 
             client.BaseAddress = new Uri(gameBaseUrl);
         });
