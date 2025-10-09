@@ -28,11 +28,6 @@ public static class JwtExtensions
                 };
             });
 
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(AuthorizationPolicies.AdministratorOnly, policy => policy.RequireRole(Role.Administrator.ToString()));
-        });
-
         return services;
     }
 

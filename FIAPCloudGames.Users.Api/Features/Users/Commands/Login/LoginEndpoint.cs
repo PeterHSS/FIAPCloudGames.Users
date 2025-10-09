@@ -14,7 +14,6 @@ public sealed class LoginEndpoint : ICarterModule
 
                 return Results.Ok(response);
             })
-            .WithTags(Tags.Users)
-            .AllowAnonymous();
+            .WithTags(Tags.Users);
     }
 }

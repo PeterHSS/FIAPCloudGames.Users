@@ -14,7 +14,6 @@ public sealed class GetAllUsersEndpoint : ICarterModule
 
                 return Results.Ok(response);
             })
-            .WithTags(Tags.Users)
-            .RequireAuthorization(AuthorizationPolicies.AdministratorOnly);
+            .WithTags(Tags.Users);
     }
 }

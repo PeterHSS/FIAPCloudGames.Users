@@ -17,7 +17,6 @@ public sealed class UpdateUserEndpoint : ICarterModule
 
                 return Results.NoContent();
             })
-            .WithTags(Tags.Users)
-            .RequireAuthorization();
+            .WithTags(Tags.Users);
     }
 }

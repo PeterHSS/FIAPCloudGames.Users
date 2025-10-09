@@ -17,7 +17,6 @@ public sealed class RegisterEndpoint : ICarterModule
 
                 return Results.Created();
             })
-            .WithTags(Tags.Users)
-            .AllowAnonymous();
+            .WithTags(Tags.Users);
     }
 }

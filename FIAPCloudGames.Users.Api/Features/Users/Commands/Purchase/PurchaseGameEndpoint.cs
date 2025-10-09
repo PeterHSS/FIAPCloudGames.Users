@@ -14,7 +14,6 @@ public sealed class PurchaseGameEndpoint : ICarterModule
 
                 return Results.NoContent();
             })
-            .WithTags(Tags.Users)
-            .RequireAuthorization();
+            .WithTags(Tags.Users);
     }
 }
