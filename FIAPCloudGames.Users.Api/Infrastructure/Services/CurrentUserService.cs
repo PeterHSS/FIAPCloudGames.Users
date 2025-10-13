@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using FIAPCloudGames.Users.Api.Commom.Interfaces;
-using Microsoft.AspNetCore.Http;
 
 namespace FIAPCloudGames.Users.Api.Infrastructure.Services;
 

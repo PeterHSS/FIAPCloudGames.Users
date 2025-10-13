@@ -27,7 +27,7 @@ public sealed class JwtProvider : IJwtProvider
         {
             Subject = new ClaimsIdentity(
                 [
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier , user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 ]),
