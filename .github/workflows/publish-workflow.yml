@@ -1,14 +1,19 @@
-name: Deploy to Azure Container Apps
+name: Deploy Users API to EKS
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
-  DOCKERHUB_REPOSITORY: klurgs/fgc-users
-  CONTAINER_APP_NAME: fgc-users
-  RESOURCE_GROUP: fgc-rg
+  DOCKERHUB_REPOSITORY: klurgs/fgc-users-api
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: fgc-cluster
+  K8S_NAMESPACE: fgc
 
 jobs:
   build-and-deploy:
@@ -17,43 +22,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::471354727448:role/GitHubActionsEKSDeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
       - name: Build
-        run: dotnet build FIAPCloudGames.Users.sln --configuration Release
+        run: dotnet build FIAPCloudUsers.Users.sln --configuration Release
 
       - name: Test
-        run: dotnet test FIAPCloudGames.Users.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test FIAPCloudUsers.Users.sln --configuration Release --no-build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push container image to Docker Hub
+      - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
-          file: FIAPCloudGames.Users.Api/Dockerfile
+          file: FIAPCloudUsers.Users.Api/Dockerfile
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
 
-      - name: Deploy to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          imageToDeploy: ${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ env.CONTAINER_APP_NAME }}
-          environmentVariables: |
-            ASPNETCORE_ENVIRONMENT=Development
+      - name: Deploy to EKS
+        run: |
+          export IMAGE=${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
+          kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+          envsubst < FIAPCloudUsers.Users.Api/kubernetes.yaml | kubectl apply -f -
+          kubectl rollout status deployment/fiapcloudusers-users-api -n ${{ env.K8S_NAMESPACE }}
