@@ -66,4 +66,4 @@ jobs:
           export IMAGE=${{ env.DOCKERHUB_REPOSITORY }}:${{ github.sha }}
           kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
           envsubst < FIAPCloudGames.Users.Api/kubernetes.yaml | kubectl apply -f -
-          kubectl rollout status deployment/fiapcloudusers-users-api -n ${{ env.K8S_NAMESPACE }}
+          kubectl rollout status deployment/fiapcloudgames-users-api -n ${{ env.K8S_NAMESPACE }}
