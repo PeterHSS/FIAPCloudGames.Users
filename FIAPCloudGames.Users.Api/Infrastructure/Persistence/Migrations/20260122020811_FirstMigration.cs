@@ -11,8 +11,12 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "users");
+
             migrationBuilder.CreateTable(
                 name: "Users",
+                schema: "users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -33,6 +37,7 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserGame",
+                schema: "users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -46,6 +51,7 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_UserGame_Users_UserId",
                         column: x => x.UserId,
+                        principalSchema: "users",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -53,23 +59,27 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserGame_UserId",
+                schema: "users",
                 table: "UserGame",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Document",
+                schema: "users",
                 table: "Users",
                 column: "Document",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
+                schema: "users",
                 table: "Users",
                 column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Name",
+                schema: "users",
                 table: "Users",
                 column: "Name");
         }
@@ -78,10 +88,12 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserGame");
+                name: "UserGame",
+                schema: "users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Users",
+                schema: "users");
         }
     }
 }

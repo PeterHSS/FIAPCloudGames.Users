@@ -13,6 +13,8 @@ public sealed class UserDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("users");
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserDbContext).Assembly);
     }
 }

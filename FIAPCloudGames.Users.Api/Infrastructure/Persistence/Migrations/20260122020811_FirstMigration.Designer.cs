@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20251004034416_FirstMigration")]
+    [Migration("20260122020811_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -20,6 +20,7 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("users")
                 .HasAnnotation("ProductVersion", "9.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -83,13 +84,12 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
                     b.HasIndex("Name")
                         .HasDatabaseName("IX_Users_Name");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users", "users");
                 });
 
             modelBuilder.Entity("FIAPCloudGames.Users.Api.Features.Users.Models.UserGame", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("GameId")
@@ -106,7 +106,7 @@ namespace FIAPCloudGames.Users.Api.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserGame", (string)null);
+                    b.ToTable("UserGame", "users");
                 });
 
             modelBuilder.Entity("FIAPCloudGames.Users.Api.Features.Users.Models.UserGame", b =>
