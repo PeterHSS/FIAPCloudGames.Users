@@ -27,6 +27,14 @@ spec:
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value:  "service.name=fgc,service.namespace=fgc,deployment.environment=Production" 
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "https://otlp-gateway-prod-sa-east-1.grafana.net/otlp"
+        - name: OTEL_EXPORTER_OTLP_HEADERS
+          value: "Authorization=Basic MTUwNDM5NDpnbGNfZXlKdklqb2lNVFkwT1RNMk9DSXNJbTRpT2lKbVoyTWlMQ0pySWpvaU1qUXdiVEJGTUZwUFFXZDJPVTltTTJkMVRtVXdOVWMwSWl3aWJTSTZleUp5SWpvaWNISnZaQzF6WVMxbFlYTjBMVEVpZlgwPQ=="
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"  
         resources:
           requests:
             cpu: 100m

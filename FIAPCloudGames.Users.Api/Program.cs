@@ -1,10 +1,14 @@
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Carter;
 using EasyNetQ;
 using FIAPCloudGames.Infrastructure;
 using FIAPCloudGames.Users.Api.Commom.ExtensionMethods;
 using FIAPCloudGames.Users.Api.Commom.Middlewares;
 using FIAPCloudGames.Users.Api.Consumers;
+using Npgsql;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +16,28 @@ builder.Services.AddDependencyInjection(builder.Configuration);
 
 builder.Services.AddEasyNetQ(builder.Configuration.GetConnectionString("RabbitMQ")!).UseLegacyTypeNaming();
 
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeScopes = true;
+    logging.IncludeFormattedMessage = true;
+});
+
 builder.Services
     .AddOpenTelemetry()
-    .UseAzureMonitor(configureAzureMonitor => configureAzureMonitor.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"]);
+    .ConfigureResource(resource => resource.AddService("FIAPCloudGames.Users.Api"))
+    .WithMetrics(metrics =>
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddNpgsqlInstrumentation())
+    .WithTracing(tracing =>
+        tracing
+            .AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddNpgsql())
+    .UseOtlpExporter();
+
 
 builder.Services
     .AddFluentEmail(builder.Configuration["Email:SenderEmail"], builder.Configuration["Email:Sender"])
