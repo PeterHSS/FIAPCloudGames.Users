@@ -1,4 +1,5 @@
-﻿using FIAPCloudGames.Users.Api.Commom;
+﻿using EasyNetQ;
+using FIAPCloudGames.Users.Api.Commom;
 using FIAPCloudGames.Users.Api.Commom.Interfaces;
 using FIAPCloudGames.Users.Api.Features.Users.Models;
 using FIAPCloudGames.Users.Api.Features.Users.Repositories;
@@ -6,7 +7,7 @@ using Serilog;
 
 namespace FIAPCloudGames.Users.Api.Features.Users.Commands.Create;
 
-public sealed class CreateUserUseCase(IUserRepository userRepository, IPasswordHasherProvider passwordHasher, IUnitOfWork unitOfWork)
+public sealed class CreateUserUseCase(IUserRepository userRepository, IPasswordHasherProvider passwordHasher, IUnitOfWork unitOfWork, IBus bus)
 {
     public async Task HandleAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
     {
@@ -33,6 +34,8 @@ public sealed class CreateUserUseCase(IUserRepository userRepository, IPasswordH
         await userRepository.AddAsync(user, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await bus.PubSub.PublishAsync(new UserCreatedEvent(user.Id, user.Name, user.Email));
 
         Log.Information("User created successfully with ID: {UserId}", user.Id);
     }
