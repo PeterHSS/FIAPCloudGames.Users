@@ -5,7 +5,6 @@ using FIAPCloudGames.Users.Api.Commom.ExtensionMethods;
 using FIAPCloudGames.Users.Api.Commom.Middlewares;
 using FIAPCloudGames.Users.Api.Consumers;
 using Npgsql;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -24,20 +23,21 @@ builder.Logging.AddOpenTelemetry(logging =>
 
 builder.Services
     .AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService("FIAPCloudGames.Users.Api"))
     .WithMetrics(metrics =>
         metrics
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("FIAPCloudGames.Users.Api"))
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddNpgsqlInstrumentation())
+            .AddRuntimeInstrumentation()
+            .AddProcessInstrumentation()
+            .AddNpgsqlInstrumentation()
+            .AddPrometheusExporter())
     .WithTracing(tracing =>
         tracing
             .AddHttpClientInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddEntityFrameworkCoreInstrumentation()
-            .AddNpgsql())
-    .UseOtlpExporter();
-
+            .AddNpgsql());
 
 builder.Services
     .AddFluentEmail(builder.Configuration["Email:SenderEmail"], builder.Configuration["Email:Sender"])
@@ -74,6 +74,8 @@ if (app.Environment.IsDevelopment())
 
     app.ApplyMigrations();
 }
+
+app.UseOpenTelemetryPrometheusScrapingEndpoint("/users/metrics");
 
 app.UseMiddleware<RequestLogContextMiddleware>();
 

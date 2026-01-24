@@ -1,5 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
 using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 namespace FIAPCloudGames.Api.Extensions;
 
@@ -11,11 +12,11 @@ public static class SerilogExtensions
         {
             configuration.ReadFrom.Configuration(context.Configuration);
 
-            TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.CreateDefault();
-
-            telemetryConfiguration.ConnectionString = context.Configuration["ApplicationInsights:ConnectionString"];
-
-            configuration.WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces);
+            configuration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["Elasticsearch:Uri"]!))
+            {
+                AutoRegisterTemplate = true,
+                IndexFormat = "fgc-users-api-{0:yyyy.MM.dd}"
+            });
         });
         
         return hostBuilder;
