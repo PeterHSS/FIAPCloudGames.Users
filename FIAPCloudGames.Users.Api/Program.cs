@@ -1,5 +1,6 @@
 using Carter;
 using EasyNetQ;
+using FIAPCloudGames.Api.Extensions;
 using FIAPCloudGames.Infrastructure;
 using FIAPCloudGames.Users.Api.Commom.ExtensionMethods;
 using FIAPCloudGames.Users.Api.Commom.Middlewares;
@@ -8,8 +9,11 @@ using Npgsql;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.AddSerilog();
 
 builder.Services.AddDependencyInjection(builder.Configuration);
 
@@ -89,4 +93,8 @@ app.MapCarter();
 
 app.MapControllers();
 
+app.UseSerilogRequestLogging();
+
 app.Run();
+
+Log.Information("Teste de log no OpenSearch 🚀");

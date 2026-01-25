@@ -1,6 +1,5 @@
-﻿using Microsoft.ApplicationInsights.Extensibility;
-using Serilog;
-using Serilog.Sinks.Elasticsearch;
+﻿using Serilog;
+using Serilog.Sinks.OpenSearch;
 
 namespace FIAPCloudGames.Api.Extensions;
 
@@ -10,15 +9,14 @@ public static class SerilogExtensions
     {
         hostBuilder.UseSerilog((context, configuration) =>
         {
-            configuration.ReadFrom.Configuration(context.Configuration);
-
-            configuration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(context.Configuration["Elasticsearch:Uri"]!))
+            configuration.WriteTo.OpenSearch(new OpenSearchSinkOptions(new Uri("https://localhost:9200"))
             {
                 AutoRegisterTemplate = true,
-                IndexFormat = "fgc-users-api-{0:yyyy.MM.dd}"
+                IndexFormat = "fgc-users-api-{0:yyyy.MM.dd}",
+                ModifyConnectionSettings = conn => conn.ServerCertificateValidationCallback((o, certificate, chain, errors) => true).BasicAuthentication(context.Configuration["Opensearch:Username"], context.Configuration["Opensearch:Password"])
             });
         });
-        
+
         return hostBuilder;
     }
 }
