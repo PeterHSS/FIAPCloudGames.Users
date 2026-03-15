@@ -26,9 +26,6 @@ public class UserCreatedConsumer(IServiceScopeFactory serviceScopeFactory, IBus 
         }
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        await bus.PubSub.SubscribeAsync<UserCreatedEvent>(subscriptionId: "user-created-queue",
-            onMessage: async @event => await Handle(@event));
-    }
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
+        => await bus.PubSub.SubscribeAsync<UserCreatedEvent>(subscriptionId: "user-created-queue", onMessage: async @event => await Handle(@event), cancellationToken: stoppingToken);
 }

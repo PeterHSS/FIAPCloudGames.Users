@@ -1,7 +1,7 @@
 using Carter;
 using EasyNetQ;
 using FIAPCloudGames.Api.Extensions;
-using FIAPCloudGames.Infrastructure;
+using FIAPCloudGames.Users.Api;
 using FIAPCloudGames.Users.Api.Commom.ExtensionMethods;
 using FIAPCloudGames.Users.Api.Commom.Middlewares;
 using FIAPCloudGames.Users.Api.Consumers;

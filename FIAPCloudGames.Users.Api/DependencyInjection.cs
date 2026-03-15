@@ -22,7 +22,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace FIAPCloudGames.Infrastructure;
+namespace FIAPCloudGames.Users.Api;
 
 public static class DependencyInjection
 {
